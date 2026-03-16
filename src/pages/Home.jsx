@@ -2,7 +2,7 @@ function Home() {
   return (
     <div>
       <h1>NCS Portal</h1>
-      <p>Student and Teacher Application Portal</p>
+      <p>Welcome to the NCS Application Portal</p>
     </div>
   );
 }

@@ -1,19 +1,29 @@
+import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
+import StudentApplication from "./pages/StudentApplication";
+import TeacherApplication from "./pages/TeacherApplication";
+import Login from "./pages/Login";
 
 function App() {
   return (
     <div style={{ padding: "40px", fontFamily: "Arial, sans-serif" }}>
-      <Home />
-
-      <div style={{ marginTop: "20px" }}>
-        <button style={{ marginRight: "10px" }}>
+      <nav style={{ marginBottom: "30px" }}>
+        <Link to="/" style={{ marginRight: "15px" }}>Home</Link>
+        <Link to="/student-application" style={{ marginRight: "15px" }}>
           Student Application
-        </button>
-
-        <button>
+        </Link>
+        <Link to="/teacher-application" style={{ marginRight: "15px" }}>
           Teacher Application
-        </button>
-      </div>
+        </Link>
+        <Link to="/login">Login</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/student-application" element={<StudentApplication />} />
+        <Route path="/teacher-application" element={<TeacherApplication />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </div>
   );
 }
