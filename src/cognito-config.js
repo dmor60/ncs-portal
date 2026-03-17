@@ -6,7 +6,7 @@ const cognitoConfig = {
     domain: "us-east-1whancjxlh.auth.us-east-1.amazoncognito.com",
     scope: ["email", "openid", "profile"],
     redirectSignIn: "http://localhost:5173/login",
-    redirectSignOut: "http://localhost:5173/",
+    redirectSignOut: "http://localhost:5173",
     responseType: "code",
   },
 };
