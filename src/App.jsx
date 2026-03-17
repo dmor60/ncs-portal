@@ -24,6 +24,7 @@ function App() {
         <Route path="/student-application" element={<StudentApplication />} />
         <Route path="/teacher-application" element={<TeacherApplication />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
     </div>
   );
