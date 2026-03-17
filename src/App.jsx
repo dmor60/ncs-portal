@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import StudentApplication from "./pages/StudentApplication";
 import TeacherApplication from "./pages/TeacherApplication";
 import Login from "./pages/Login";
+import AuthCallback from "./components/Auth/AuthCallback";
 
 function App() {
   return (
