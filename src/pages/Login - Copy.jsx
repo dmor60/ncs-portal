@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { signInWithRedirect, signOut, getCurrentUser } from "aws-amplify/auth";
 
@@ -12,20 +11,11 @@ function Login() {
   }, []);
 
   const handleLogin = async () => {
-    try {
-      await signInWithRedirect();
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+    await signInWithRedirect();
   };
 
   const handleLogout = async () => {
-    try {
-      await signOut({ global: true });
-      setUser(null);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    await signOut({ global: true });
   };
 
   return (

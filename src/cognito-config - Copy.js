@@ -1,4 +1,4 @@
-const host = window.location.origin;
+const isLocalhost = window.location.hostname === "localhost";
 
 const cognitoConfig = {
   region: "us-east-1",
@@ -7,8 +7,12 @@ const cognitoConfig = {
   oauth: {
     domain: "us-east-1whancjxlh.auth.us-east-1.amazoncognito.com",
     scope: ["email", "openid"],
-    redirectSignIn: `${host}/login`,
-    redirectSignOut: `${host}/`,
+    redirectSignIn: isLocalhost
+      ? "http://localhost:5173/login"
+      : "https://main.d7l5a6qsx6h8h.amplifyapp.com/login",
+    redirectSignOut: isLocalhost
+      ? "http://localhost:5173/"
+      : "https://main.d7l5a6qsx6h8h.amplifyapp.com/",
     responseType: "code",
   },
 };
