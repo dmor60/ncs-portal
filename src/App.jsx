@@ -10,7 +10,7 @@ import AdminRoute from "./components/Auth/AdminRoute";
 import AdminSetupMfa from "./pages/AdminSetupMfa";
 
 // (example admin page - use your real one if different)
-import TeacherApplication from "./pages/TeacherApplication";
+
 
 function App() {
   return (
