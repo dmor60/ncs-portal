@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { signOut } from "aws-amplify/auth";
 import { getCurrentUserInfo } from "../utils/authHelpers";
@@ -8,7 +8,6 @@ function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -31,12 +30,17 @@ function Navbar() {
   }, []);
 
   const handleLogout = async () => {
+    const clientId = "i6utfvpaqq2g4om2f5tpbkj1b";
+    const logoutUri = encodeURIComponent("https://psp.ncs.edu.bs/");
+
     try {
-      await signOut();
-      navigate("/login", { replace: true });
-      window.location.reload();
+      await signOut({ global: true });
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error("Amplify sign out failed:", error);
+    } finally {
+      window.location.href =
+        `https://us-east-1whancjxlh.auth.us-east-1.amazoncognito.com/logout` +
+        `?client_id=${clientId}&logout_uri=${logoutUri}`;
     }
   };
 
