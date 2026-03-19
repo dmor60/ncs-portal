@@ -1,16 +1,19 @@
 import { Routes, Route, Link } from "react-router-dom";
+
 import Home from "./pages/Home";
 import StudentApplication from "./pages/StudentApplication";
+
 import TeacherApplication from "./pages/TeacherApplication";
+import TeacherApply from "./pages/TeacherApply";
+import TeacherStatus from "./pages/TeacherStatus";
+import TeacherAdmin from "./pages/TeacherAdmin";
+
 import Login from "./pages/Login";
 import AuthCallback from "./components/Auth/AuthCallback";
-
-// NEW imports
-import AdminRoute from "./components/Auth/AdminRoute";
 import AdminSetupMfa from "./pages/AdminSetupMfa";
 
-// (example admin page - use your real one if different)
-
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import AdminRoute from "./components/Auth/AdminRoute";
 
 function App() {
   return (
@@ -18,12 +21,10 @@ function App() {
       <nav style={{ marginBottom: "30px" }}>
         <Link to="/" style={{ marginRight: "15px" }}>Home</Link>
 
-        {/* PUBLIC */}
         <Link to="/student-application" style={{ marginRight: "15px" }}>
           Student Application
         </Link>
 
-        {/* ADMIN ONLY */}
         <Link to="/teacher-application" style={{ marginRight: "15px" }}>
           Teacher Application
         </Link>
@@ -32,25 +33,59 @@ function App() {
       </nav>
 
       <Routes>
+        {/* Public */}
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
 
-        {/* PUBLIC ROUTE */}
-        <Route path="/student-application" element={<StudentApplication />} />
+        {/* Protected (ALL applicants must login) */}
+        <Route
+          path="/student-application"
+          element={
+            <ProtectedRoute>
+              <StudentApplication />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* ADMIN PROTECTED ROUTE */}
         <Route
           path="/teacher-application"
           element={
-            <AdminRoute>
+            <ProtectedRoute>
               <TeacherApplication />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher-application/apply"
+          element={
+            <ProtectedRoute>
+              <TeacherApply />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher-application/status"
+          element={
+            <ProtectedRoute>
+              <TeacherStatus />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin ONLY + MFA */}
+        <Route
+          path="/teacher-application/admin"
+          element={
+            <AdminRoute>
+              <TeacherAdmin />
             </AdminRoute>
           }
         />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
-
-        {/* MFA SETUP PAGE */}
+        {/* MFA setup route */}
         <Route path="/admin/setup-mfa" element={<AdminSetupMfa />} />
       </Routes>
     </div>
