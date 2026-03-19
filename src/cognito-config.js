@@ -6,7 +6,7 @@ const cognitoConfig = {
   userPoolWebClientId: "i6utfvpaqq2g4om2f5tpbkj1b",
   oauth: {
     domain: "us-east-1whancjxlh.auth.us-east-1.amazoncognito.com",
-    scope: ["email", "openid"],
+    scope: ["openid", "email", "profile", "aws.cognito.signin.user.admin"],
     redirectSignIn: `${host}/auth/callback`,   // ✅ FIXED
     redirectSignOut: `${host}/`,
     responseType: "code",
