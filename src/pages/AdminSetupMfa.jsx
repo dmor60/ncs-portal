@@ -13,8 +13,6 @@ function AdminSetupMfa() {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("Preparing MFA setup...");
   const navigate = useNavigate();
-
-  // Prevent duplicate setUpTOTP() calls in development
   const startedRef = useRef(false);
 
   useEffect(() => {
@@ -26,14 +24,12 @@ function AdminSetupMfa() {
         setError("");
 
         const details = await setUpTOTP();
-
-        // Correct method name for your setup
         const uri = details.getSetupUri("NCS PSP");
 
-        setSetupUri(uri);
-        setSharedSecret(details.sharedSecret);
+        setSetupUri(uri.toString()); // important
+        setSharedSecret(details.sharedSecret || "");
         setStatus(
-          "Scan the authenticator setup link or enter the secret manually, then type the 6-digit code."
+          "Scan the setup link with your authenticator app or enter the secret manually, then type the 6-digit code."
         );
       } catch (err) {
         console.error("setUpTOTP failed:", err);
