@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
 import StudentApplication from "./pages/StudentApplication";
@@ -14,31 +14,18 @@ import AdminSetupMfa from "./pages/AdminSetupMfa";
 
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import AdminRoute from "./components/Auth/AdminRoute";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <div style={{ padding: "40px", fontFamily: "Arial, sans-serif" }}>
-      <nav style={{ marginBottom: "30px" }}>
-        <Link to="/" style={{ marginRight: "15px" }}>Home</Link>
-
-        <Link to="/student-application" style={{ marginRight: "15px" }}>
-          Student Application
-        </Link>
-
-        <Link to="/teacher-application" style={{ marginRight: "15px" }}>
-          Teacher Application
-        </Link>
-
-        <Link to="/login">Login</Link>
-      </nav>
+      <Navbar />
 
       <Routes>
-        {/* Public */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
 
-        {/* Protected (ALL applicants must login) */}
         <Route
           path="/student-application"
           element={
@@ -75,7 +62,6 @@ function App() {
           }
         />
 
-        {/* Admin ONLY + MFA */}
         <Route
           path="/teacher-application/admin"
           element={
@@ -85,7 +71,6 @@ function App() {
           }
         />
 
-        {/* MFA setup route */}
         <Route path="/admin/setup-mfa" element={<AdminSetupMfa />} />
       </Routes>
     </div>
