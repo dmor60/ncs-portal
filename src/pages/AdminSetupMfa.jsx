@@ -1,30 +1,36 @@
+
 import { useEffect, useState } from "react";
 import {
   setUpTOTP,
   verifyTOTPSetup,
   updateMFAPreference,
 } from "aws-amplify/auth";
+import { useNavigate } from "react-router-dom";
 
 function AdminSetupMfa() {
   const [setupUri, setSetupUri] = useState("");
   const [sharedSecret, setSharedSecret] = useState("");
   const [code, setCode] = useState("");
-  const [message, setMessage] = useState("Preparing MFA setup...");
+  const [status, setStatus] = useState("Preparing MFA setup...");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const startSetup = async () => {
       try {
         setError("");
         const details = await setUpTOTP();
-        const uri = details.getSetupUri("NCS PSP");
+
+        // Important: Amplify docs use getSetupURI
+        const uri = details.getSetupURI("NCS PSP");
+
         setSetupUri(uri);
         setSharedSecret(details.sharedSecret);
-        setMessage("Scan the QR in your authenticator app, then enter the 6-digit code.");
+        setStatus("Scan the QR link with Google Authenticator, Microsoft Authenticator, or Authy, then enter the 6-digit code.");
       } catch (err) {
-        console.error(err);
+        console.error("setUpTOTP failed:", err);
         setError("Could not start TOTP setup.");
-        setMessage("");
+        setStatus("");
       }
     };
 
@@ -36,36 +42,35 @@ function AdminSetupMfa() {
 
     try {
       setError("");
+
       await verifyTOTPSetup({ code });
 
       await updateMFAPreference({
         totp: "PREFERRED",
       });
 
-      window.location.href = "/teacher-application";
+      navigate("/teacher-application", { replace: true });
     } catch (err) {
-      console.error(err);
-      setError("Invalid code or MFA setup failed. Try a fresh code.");
+      console.error("verifyTOTPSetup failed:", err);
+      setError("Invalid code or MFA setup failed. Wait for a fresh 6-digit code and try again.");
     }
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "520px" }}>
-      <h1>Admin MFA Required</h1>
-      <p>{message}</p>
+    <div style={{ padding: "2rem", maxWidth: "560px" }}>
+      <h1>Administrator MFA Required</h1>
+      <p>{status}</p>
 
       {setupUri && (
         <div style={{ marginBottom: "1rem" }}>
-          <p>
-            Open this on a device with your authenticator app, or use the secret key manually.
-          </p>
-          <a href={setupUri}>Open authenticator setup</a>
+          <p>Open this link on a device with your authenticator app:</p>
+          <a href={setupUri}>{setupUri}</a>
         </div>
       )}
 
       {sharedSecret && (
         <div style={{ marginBottom: "1rem" }}>
-          <strong>Secret key:</strong>
+          <strong>Manual secret key:</strong>
           <div style={{ wordBreak: "break-all" }}>{sharedSecret}</div>
         </div>
       )}
