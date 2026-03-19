@@ -9,12 +9,12 @@ function AuthCallback() {
     const handleCallback = async () => {
       try {
         await getCurrentUser();
-        navigate("/login", { replace: true });
+        navigate("/", { replace: true });
       } catch {
         setTimeout(async () => {
           try {
             await getCurrentUser();
-            navigate("/login", { replace: true });
+            navigate("/", { replace: true });
           } catch {
             navigate("/login", { replace: true });
           }
