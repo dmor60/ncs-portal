@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   setUpTOTP,
   verifyTOTPSetup,
@@ -11,22 +10,31 @@ function AdminSetupMfa() {
   const [setupUri, setSetupUri] = useState("");
   const [sharedSecret, setSharedSecret] = useState("");
   const [code, setCode] = useState("");
-  const [status, setStatus] = useState("Preparing MFA setup...");
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("Preparing MFA setup...");
   const navigate = useNavigate();
+
+  // Prevent duplicate setUpTOTP() calls in development
+  const startedRef = useRef(false);
 
   useEffect(() => {
     const startSetup = async () => {
+      if (startedRef.current) return;
+      startedRef.current = true;
+
       try {
         setError("");
+
         const details = await setUpTOTP();
 
-        // Important: Amplify docs use getSetupURI
-        const uri = details.getSetupURI("NCS PSP");
+        // Correct method name for your setup
+        const uri = details.getSetupUri("NCS PSP");
 
         setSetupUri(uri);
         setSharedSecret(details.sharedSecret);
-        setStatus("Scan the QR link with Google Authenticator, Microsoft Authenticator, or Authy, then enter the 6-digit code.");
+        setStatus(
+          "Scan the authenticator setup link or enter the secret manually, then type the 6-digit code."
+        );
       } catch (err) {
         console.error("setUpTOTP failed:", err);
         setError("Could not start TOTP setup.");
@@ -52,7 +60,7 @@ function AdminSetupMfa() {
       navigate("/teacher-application", { replace: true });
     } catch (err) {
       console.error("verifyTOTPSetup failed:", err);
-      setError("Invalid code or MFA setup failed. Wait for a fresh 6-digit code and try again.");
+      setError("Invalid code or MFA setup failed. Wait for a fresh code and try again.");
     }
   };
 
@@ -63,7 +71,7 @@ function AdminSetupMfa() {
 
       {setupUri && (
         <div style={{ marginBottom: "1rem" }}>
-          <p>Open this link on a device with your authenticator app:</p>
+          <p>Open this link with your authenticator app:</p>
           <a href={setupUri}>{setupUri}</a>
         </div>
       )}
@@ -84,7 +92,12 @@ function AdminSetupMfa() {
           onChange={(e) => setCode(e.target.value)}
           placeholder="123456"
           maxLength={6}
-          style={{ display: "block", margin: "10px 0", padding: "10px", width: "100%" }}
+          style={{
+            display: "block",
+            margin: "10px 0",
+            padding: "10px",
+            width: "100%",
+          }}
         />
         <button type="submit">Verify MFA</button>
       </form>
