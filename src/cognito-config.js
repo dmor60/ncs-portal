@@ -7,7 +7,7 @@ const cognitoConfig = {
   oauth: {
     domain: "us-east-1whancjxlh.auth.us-east-1.amazoncognito.com",
     scope: ["email", "openid"],
-    redirectSignIn: `${host}/login`,
+    redirectSignIn: `${host}/auth/callback`,   // ✅ FIXED
     redirectSignOut: `${host}/`,
     responseType: "code",
   },
