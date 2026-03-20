@@ -7,22 +7,37 @@ function TeacherApply() {
     email: "",
     subjectArea: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submit clicked");
+    console.log("Form data:", form);
 
-    const result = await createApplication({
-      ...form,
-      applicationType: "teacher",
-    });
+    setSubmitting(true);
+    setMessage("");
 
-    console.log("Submitted:", result);
-    alert("Application submitted!");
-    setForm({
-      fullName: "",
-      email: "",
-      subjectArea: "",
-    });
+    try {
+      const result = await createApplication({
+        ...form,
+        applicationType: "teacher",
+      });
+
+      console.log("API result:", result);
+      setMessage("Application submitted successfully.");
+
+      setForm({
+        fullName: "",
+        email: "",
+        subjectArea: "",
+      });
+    } catch (error) {
+      console.error("Submit error:", error);
+      setMessage("Submission failed. Check console.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -53,7 +68,15 @@ function TeacherApply() {
         />
       </div>
 
-      <button type="submit">Apply</button>
+      <button type="submit" disabled={submitting}>
+        {submitting ? "Submitting..." : "Apply"}
+      </button>
+
+      {message && (
+        <p style={{ marginTop: "12px" }}>
+          {message}
+        </p>
+      )}
     </form>
   );
 }
