@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getApplications, updateApplication } from "../api/applications";
+import { getCurrentUserInfo } from "../utils/authHelpers";
 
 function TeacherAdmin() {
   const [applications, setApplications] = useState([]);
@@ -11,7 +12,6 @@ function TeacherAdmin() {
   const loadApplications = async () => {
     try {
       const data = await getApplications();
-      console.log("Loaded applications:", data);
       setApplications(data);
     } catch (error) {
       console.error("Failed to load applications:", error);
@@ -19,20 +19,20 @@ function TeacherAdmin() {
   };
 
   const handleUpdate = async (id, status) => {
-    console.log("Updating application:", id, status);
-    await updateApplication(id, status);
-    await loadApplications();
+    try {
+      const info = await getCurrentUserInfo();
+      const reviewedBy = info.email || info.user?.username || "admin";
+
+      await updateApplication(id, status, reviewedBy);
+      await loadApplications();
+    } catch (error) {
+      console.error("Failed to update application:", error);
+    }
   };
 
   const teacherApplications = useMemo(() => {
     return applications.filter(
       (app) => (app.applicationType || "").toLowerCase() === "teacher"
-    );
-  }, [applications]);
-
-  const studentApplications = useMemo(() => {
-    return applications.filter(
-      (app) => (app.applicationType || "").toLowerCase() === "student"
     );
   }, [applications]);
 
@@ -52,10 +52,6 @@ function TeacherAdmin() {
     background: "#fff",
   };
 
-  const sectionStyle = {
-    marginTop: "30px",
-  };
-
   const tableStyle = {
     width: "100%",
     borderCollapse: "collapse",
@@ -69,58 +65,10 @@ function TeacherAdmin() {
     verticalAlign: "top",
   };
 
-  const renderTable = (rows, typeLabel) => {
-    return (
-      <div style={sectionStyle}>
-        <h2>{typeLabel}</h2>
-
-        {rows.length === 0 ? (
-          <p>No {typeLabel.toLowerCase()} found.</p>
-        ) : (
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={thtdStyle}>Name</th>
-                <th style={thtdStyle}>Email</th>
-                <th style={thtdStyle}>Subject</th>
-                <th style={thtdStyle}>Status</th>
-                <th style={thtdStyle}>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {rows.map((app) => (
-                <tr key={app.applicationid}>
-                  <td style={thtdStyle}>{app.fullName || ""}</td>
-                  <td style={thtdStyle}>{app.email || ""}</td>
-                  <td style={thtdStyle}>{app.subjectArea || ""}</td>
-                  <td style={thtdStyle}>{app.status || ""}</td>
-                  <td style={thtdStyle}>
-                    <button
-                      onClick={() => handleUpdate(app.applicationid, "accepted")}
-                      style={{ marginRight: "8px" }}
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() => handleUpdate(app.applicationid, "rejected")}
-                    >
-                      Reject
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div>
       <h1>Admin Dashboard</h1>
-      <p>Review and manage teacher and student applications.</p>
+      <p>Review and manage teacher applications.</p>
 
       <div
         style={{
@@ -151,8 +99,53 @@ function TeacherAdmin() {
         </div>
       </div>
 
-      {renderTable(teacherApplications, "Teacher Applications")}
-      {renderTable(studentApplications, "Student Applications")}
+      <div style={{ marginTop: "30px" }}>
+        <h2>Teacher Applications</h2>
+
+        {teacherApplications.length === 0 ? (
+          <p>No teacher applications found.</p>
+        ) : (
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thtdStyle}>Name</th>
+                <th style={thtdStyle}>Email</th>
+                <th style={thtdStyle}>Subject</th>
+                <th style={thtdStyle}>Status</th>
+                <th style={thtdStyle}>Submitted</th>
+                <th style={thtdStyle}>Reviewed</th>
+                <th style={thtdStyle}>Reviewed By</th>
+                <th style={thtdStyle}>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {teacherApplications.map((app) => (
+                <tr key={app.applicationid}>
+                  <td style={thtdStyle}>{app.fullName || ""}</td>
+                  <td style={thtdStyle}>{app.email || ""}</td>
+                  <td style={thtdStyle}>{app.subjectArea || ""}</td>
+                  <td style={thtdStyle}>{app.status || ""}</td>
+                  <td style={thtdStyle}>{app.submittedAt || ""}</td>
+                  <td style={thtdStyle}>{app.reviewedAt || ""}</td>
+                  <td style={thtdStyle}>{app.reviewedBy || ""}</td>
+                  <td style={thtdStyle}>
+                    <button
+                      onClick={() => handleUpdate(app.applicationid, "accepted")}
+                      style={{ marginRight: "8px" }}
+                    >
+                      Accept
+                    </button>
+                    <button onClick={() => handleUpdate(app.applicationid, "rejected")}>
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

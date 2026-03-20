@@ -36,7 +36,14 @@ function TeacherStatus() {
     if (status === "pending") return "#b8860b";
     if (status === "accepted") return "green";
     if (status === "rejected") return "crimson";
-    return "black";
+    return "#333";
+  };
+
+  const getStatusBackground = () => {
+    if (status === "pending") return "#fff8e1";
+    if (status === "accepted") return "#e8f5e9";
+    if (status === "rejected") return "#ffebee";
+    return "#f5f5f5";
   };
 
   const renderMessage = () => {
@@ -68,31 +75,75 @@ function TeacherStatus() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "80px" }}>
-      <h1>Application Status</h1>
+    <div
+      style={{
+        maxWidth: "760px",
+        margin: "60px auto",
+        padding: "24px",
+      }}
+    >
+      <div
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "16px",
+          padding: "32px",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+          textAlign: "center",
+        }}
+      >
+        <h1 style={{ marginTop: 0, marginBottom: "24px" }}>Application Status</h1>
 
-      <p style={{ fontSize: "20px", marginTop: "20px" }}>
-        <strong>Status: </strong>
-        <span style={{ color: getStatusColor(), fontWeight: "bold" }}>
-          {renderStatusLabel()}
-        </span>
-      </p>
-
-      {application && (
-        <div style={{ marginTop: "20px" }}>
-          <p>
-            <strong>Name:</strong> {application.fullName}
-          </p>
-          <p>
-            <strong>Email:</strong> {application.email}
-          </p>
-          <p>
-            <strong>Subject Area:</strong> {application.subjectArea}
-          </p>
+        <div
+          style={{
+            display: "inline-block",
+            background: getStatusBackground(),
+            color: getStatusColor(),
+            padding: "10px 18px",
+            borderRadius: "999px",
+            fontWeight: "bold",
+            fontSize: "18px",
+            marginBottom: "24px",
+          }}
+        >
+          Status: {renderStatusLabel()}
         </div>
-      )}
 
-      <p style={{ fontSize: "18px", marginTop: "20px" }}>{renderMessage()}</p>
+        {application && (
+          <div
+            style={{
+              marginTop: "10px",
+              marginBottom: "24px",
+              textAlign: "left",
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
+              borderRadius: "12px",
+              padding: "20px",
+            }}
+          >
+            <p style={{ margin: "0 0 10px 0" }}>
+              <strong>Name:</strong> {application.fullName}
+            </p>
+            <p style={{ margin: "0 0 10px 0" }}>
+              <strong>Email:</strong> {application.email}
+            </p>
+            <p style={{ margin: 0 }}>
+              <strong>Subject Area:</strong> {application.subjectArea}
+            </p>
+          </div>
+        )}
+
+        <p
+          style={{
+            fontSize: "18px",
+            lineHeight: 1.6,
+            margin: 0,
+            color: "#374151",
+          }}
+        >
+          {renderMessage()}
+        </p>
+      </div>
     </div>
   );
 }

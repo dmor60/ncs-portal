@@ -12,9 +12,6 @@ export async function getApplications() {
 }
 
 export async function createApplication(data) {
-  console.log("POSTing to:", `${API_URL}/applications`);
-  console.log("Payload:", data);
-
   const res = await fetch(`${API_URL}/applications`, {
     method: "POST",
     headers: {
@@ -24,23 +21,22 @@ export async function createApplication(data) {
   });
 
   const text = await res.text();
-  console.log("POST response status:", res.status);
-  console.log("POST response text:", text);
+  const parsed = text ? JSON.parse(text) : {};
 
   if (!res.ok) {
-    throw new Error(`POST /applications failed: ${res.status} ${text}`);
+    throw new Error(parsed.message || `POST /applications failed: ${res.status}`);
   }
 
-  return text ? JSON.parse(text) : {};
+  return parsed;
 }
 
-export async function updateApplication(id, status) {
+export async function updateApplication(id, status, reviewedBy) {
   const res = await fetch(`${API_URL}/applications/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ status }),
+    body: JSON.stringify({ status, reviewedBy }),
   });
 
   const text = await res.text();
