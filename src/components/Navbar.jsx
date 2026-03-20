@@ -7,7 +7,7 @@ function Navbar() {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
     const loadUser = async () => {
@@ -16,11 +16,11 @@ function Navbar() {
       if (info.user) {
         setIsAuthenticated(true);
         setIsAdmin(info.isAdmin);
-        setUsername(info.user.username || "");
+        setDisplayName(info.email || info.user.username || "");
       } else {
         setIsAuthenticated(false);
         setIsAdmin(false);
-        setUsername("");
+        setDisplayName("");
       }
 
       setLoading(false);
@@ -75,7 +75,7 @@ function Navbar() {
       ) : (
         <>
           <span style={{ marginRight: "15px" }}>
-            Signed in as: <strong>{username}</strong>
+            Signed in as: <strong>{displayName}</strong>
           </span>
           <button onClick={handleLogout}>Logout</button>
         </>

@@ -13,9 +13,16 @@ export async function getCurrentUserInfo() {
     }
 
     const groups = session.tokens?.idToken?.payload?.["cognito:groups"] || [];
+    const email =
+      session.tokens?.idToken?.payload?.email ||
+      session.tokens?.accessToken?.payload?.username ||
+      user?.signInDetails?.loginId ||
+      user?.username ||
+      "";
 
     return {
       user,
+      email,
       groups,
       isAdmin: groups.includes("Admins"),
       mfaPreference: mfa?.preferred,
@@ -24,6 +31,7 @@ export async function getCurrentUserInfo() {
   } catch (error) {
     return {
       user: null,
+      email: "",
       groups: [],
       isAdmin: false,
       mfaPreference: null,
