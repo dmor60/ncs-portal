@@ -12,17 +12,17 @@ function TeacherStatus() {
   const loadStatus = async () => {
     try {
       const info = await getCurrentUserInfo();
-      const userSub = info.user?.userId || info.user?.username;
+      const userSub = info.user?.userId || info.user?.username || info.email;
 
       const apps = await getMyApplications(userSub);
 
       if (apps.length === 0) {
         setStatus("none");
       } else {
-        setStatus(apps[0].status); // latest/first
+        setStatus(apps[apps.length - 1].status || "pending");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Status load error:", error);
       setStatus("error");
     }
   };
@@ -30,28 +30,25 @@ function TeacherStatus() {
   const renderMessage = () => {
     if (status === "loading") return "Checking your application...";
     if (status === "none") return "No application found.";
-
     if (status === "pending") {
       return "Your application is under review. We will get back to you ASAP.";
     }
-
     if (status === "accepted") {
       return "Congratulations! Your application has been accepted.";
     }
-
     if (status === "rejected") {
       return "Thank you for applying. Unfortunately, your application was not successful.";
     }
-
+    if (status === "error") {
+      return "There was a problem checking your application.";
+    }
     return "Status unknown.";
   };
 
   return (
     <div style={{ textAlign: "center", marginTop: "80px" }}>
       <h1>Application Status</h1>
-      <p style={{ fontSize: "18px", marginTop: "20px" }}>
-        {renderMessage()}
-      </p>
+      <p style={{ fontSize: "18px", marginTop: "20px" }}>{renderMessage()}</p>
     </div>
   );
 }

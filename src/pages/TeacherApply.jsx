@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createApplication } from "../api/applications";
+import { getCurrentUserInfo } from "../utils/authHelpers";
 
 function TeacherApply() {
   const [form, setForm] = useState({
@@ -12,21 +13,22 @@ function TeacherApply() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submit clicked");
-    console.log("Form data:", form);
-
     setSubmitting(true);
     setMessage("");
 
     try {
-      const result = await createApplication({
+      const info = await getCurrentUserInfo();
+
+      const payload = {
         ...form,
         applicationType: "teacher",
-      });
+        submittedBy: info.user?.userId || info.user?.username || info.email,
+      };
 
-      console.log("API result:", result);
+      const result = await createApplication(payload);
+      console.log("Submitted:", result);
+
       setMessage("Application submitted successfully.");
-
       setForm({
         fullName: "",
         email: "",
@@ -72,11 +74,7 @@ function TeacherApply() {
         {submitting ? "Submitting..." : "Apply"}
       </button>
 
-      {message && (
-        <p style={{ marginTop: "12px" }}>
-          {message}
-        </p>
-      )}
+      {message && <p style={{ marginTop: "12px" }}>{message}</p>}
     </form>
   );
 }
