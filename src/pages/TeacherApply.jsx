@@ -43,30 +43,45 @@ function TeacherApply() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ maxWidth: "500px" }}>
       <h1>Teacher Application</h1>
 
-      <div style={{ marginBottom: "12px" }}>
+      <div style={{ marginBottom: "16px" }}>
+        <label htmlFor="fullName" style={{ display: "block", marginBottom: "6px" }}>
+          Full Name
+        </label>
         <input
-          placeholder="Full Name"
+          id="fullName"
+          type="text"
           value={form.fullName}
           onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+          style={{ width: "100%", padding: "8px" }}
         />
       </div>
 
-      <div style={{ marginBottom: "12px" }}>
+      <div style={{ marginBottom: "16px" }}>
+        <label htmlFor="email" style={{ display: "block", marginBottom: "6px" }}>
+          Email Address
+        </label>
         <input
-          placeholder="Email"
+          id="email"
+          type="email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
+          style={{ width: "100%", padding: "8px" }}
         />
       </div>
 
-      <div style={{ marginBottom: "12px" }}>
+      <div style={{ marginBottom: "16px" }}>
+        <label htmlFor="subjectArea" style={{ display: "block", marginBottom: "6px" }}>
+          Subject Area
+        </label>
         <input
-          placeholder="Subject Area"
+          id="subjectArea"
+          type="text"
           value={form.subjectArea}
           onChange={(e) => setForm({ ...form, subjectArea: e.target.value })}
+          style={{ width: "100%", padding: "8px" }}
         />
       </div>
 
