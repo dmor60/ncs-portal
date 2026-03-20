@@ -51,3 +51,15 @@ export async function updateApplication(id, status) {
 
   return text ? JSON.parse(text) : {};
 }
+
+export async function getMyApplications(userSub) {
+  const res = await fetch(`${API_URL}/applications`);
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`GET /applications failed: ${res.status} ${text}`);
+  }
+
+  const data = await res.json();
+  return data.filter((app) => app.submittedBy === userSub);
+}

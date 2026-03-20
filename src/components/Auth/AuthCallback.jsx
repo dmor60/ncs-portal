@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser } from "aws-amplify/auth";
+import { getCurrentUserInfo } from "../../utils/authHelpers";
 
 function AuthCallback() {
   const navigate = useNavigate();
@@ -8,17 +8,16 @@ function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        await getCurrentUser();
-        navigate("/", { replace: true });
-      } catch {
-        setTimeout(async () => {
-          try {
-            await getCurrentUser();
-            navigate("/", { replace: true });
-          } catch {
-            navigate("/login", { replace: true });
-          }
-        }, 1000);
+        const info = await getCurrentUserInfo();
+
+        if (info.isAdmin) {
+          navigate("/teacher-application/admin", { replace: true });
+        } else {
+          navigate("/teacher-application/status", { replace: true });
+        }
+      } catch (error) {
+        console.error("Auth callback failed:", error);
+        navigate("/login", { replace: true });
       }
     };
 
