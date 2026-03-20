@@ -9,11 +9,17 @@ function TeacherAdmin() {
   }, []);
 
   const loadApplications = async () => {
-    const data = await getApplications();
-    setApplications(data);
+    try {
+      const data = await getApplications();
+      console.log("Loaded applications:", data);
+      setApplications(data);
+    } catch (error) {
+      console.error("Failed to load applications:", error);
+    }
   };
 
   const handleUpdate = async (id, status) => {
+    console.log("Updating application:", id, status);
     await updateApplication(id, status);
     await loadApplications();
   };
@@ -35,16 +41,16 @@ function TeacherAdmin() {
 
         <tbody>
           {applications.map((app) => (
-            <tr key={app.applicationId}>
-              <td>{app.fullName}</td>
-              <td>{app.email}</td>
-              <td>{app.subjectArea}</td>
-              <td>{app.status}</td>
+            <tr key={app.applicationid}>
+              <td>{app.fullName || ""}</td>
+              <td>{app.email || ""}</td>
+              <td>{app.subjectArea || ""}</td>
+              <td>{app.status || ""}</td>
               <td>
-                <button onClick={() => handleUpdate(app.applicationId, "accepted")}>
+                <button onClick={() => handleUpdate(app.applicationid, "accepted")}>
                   Accept
                 </button>
-                <button onClick={() => handleUpdate(app.applicationId, "rejected")}>
+                <button onClick={() => handleUpdate(app.applicationid, "rejected")}>
                   Reject
                 </button>
               </td>
